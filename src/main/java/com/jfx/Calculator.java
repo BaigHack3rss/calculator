@@ -8,13 +8,18 @@ public class Calculator {
         Stack<Character> operations = new Stack<>();
         for (int i = 0; i < expression.length(); i++) {
             char c = expression.charAt(i);
-            if (Character.isDigit(c)) {
-                double number = c - '0';
-                while (i + 1 < expression.length() && Character.isDigit(expression.charAt(i + 1))) {
-                    number = number * 10 + (expression.charAt(i + 1) - '0');
+            if (Character.isDigit(c) || c == '.' || (c == '-' && (i == 0 || !Character.isDigit(expression.charAt(i - 1))))) {
+                StringBuilder number = new StringBuilder();
+                if (c == '-') {
+                    number.append(c);
                     i++;
                 }
-                numbers.push(number);
+                while (i < expression.length() && (Character.isDigit(expression.charAt(i)) || expression.charAt(i) == '.')) {
+                    number.append(expression.charAt(i));
+                    i++;
+                }
+                i--; // decrement i because the for loop will increment it
+                numbers.push(Double.parseDouble(number.toString()));
                 if (!operations.isEmpty() && (operations.peek() == '*' || operations.peek() == '/')) {
                     compute(numbers, operations);
                 }
